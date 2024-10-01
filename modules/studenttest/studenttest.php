@@ -31,13 +31,16 @@ class StudentTest extends Module
 
     public function hookDisplayAdminProductsExtra($params)
     {
-        (int)$idProduct = Tools::getValue('id_product');
+        $idProduct = Tools::getValue('id_product');
         $token = Tools::getValue('token');
 
         $shortDesc = $this->getValueOfShortDesc($idProduct);
 
+        $link = Context::getContext()->link;
+        $actionLink = $link->getAdminLink('AdminProducts', false, ['action' => 'postProcess']);
+
         $html = '    
-            <form action="" method="post">
+            <form action="' . $actionLink . '" method="post">
                 <input type="hidden" name="id_product" value="' . $idProduct . '" />
                 <input type="hidden" name="token" value="' . $token . '" />
                 <input type="hidden" name="submitAddCustomField" value="1" />
@@ -50,7 +53,7 @@ class StudentTest extends Module
 
     public function hookDisplayProductTab($params)
     {
-        (int)$product = new Product($params['product']->id);
+        $product = new Product($params['product']->id);
 
         $shortDesc = $product->short_desc;
 
@@ -65,7 +68,8 @@ class StudentTest extends Module
 
     private function getValueOfShortDesc($idProduct)
     {
-        return Db::getInstance()->getValue('SELECT short_desc FROM ' . _DB_PREFIX_ . 'product WHERE id_product = ' . $idProduct);
+        return Db::getInstance()->getValue('SELECT short_desc FROM ' 
+                . _DB_PREFIX_ . 'product WHERE id_product = ' . (int)$idProduct);
     }
 
 }
