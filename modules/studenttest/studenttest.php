@@ -31,26 +31,26 @@ class StudentTest extends Module
 
     public function hookDisplayAdminProductsExtra($params)
     {
+        (int)$idProduct = Tools::getValue('id_product');
+        $token = Tools::getValue('token');
 
+        $shortDesc = $this->getValueOfShortDesc($idProduct);
 
-
-        // return the html form
-        // the submit button must have submitAddCustomField as name to work
-        // the input text must have short_desc as name
-
-        // instanciate the product class with the parameter get id_product
-        // save the value of the form short_desc on product class
-        // use the method save on product class to persist date in database
-
-
-
-        $output = '';
-        return $output;
+        $html = '    
+            <form action="" method="post">
+                <input type="hidden" name="id_product" value="' . $idProduct . '" />
+                <input type="hidden" name="token" value="' . $token . '" />
+                <input type="hidden" name="submitAddCustomField" value="1" />
+                <label for="short_desc">Short description</label>
+                <textarea name="short_desc" id="short_desc">' . htmlspecialchars($shortDesc) . '</textarea>
+                <button type="submit" name="submitAddCustomField">' . 'Envoyer' . '</button>
+            </form>';
+        return $html;
     }
 
     public function hookDisplayProductTab($params)
     {
-        $product = new Product($params['product']->id);
+        (int)$product = new Product($params['product']->id);
 
         $shortDesc = $product->short_desc;
 
@@ -61,6 +61,11 @@ class StudentTest extends Module
                 . $shortDesc . 
                 '</div>';
         return $html;
+    }
+
+    private function getValueOfShortDesc($idProduct)
+    {
+        return Db::getInstance()->getValue('SELECT short_desc FROM ' . _DB_PREFIX_ . 'product WHERE id_product = ' . $idProduct);
     }
 
 }
