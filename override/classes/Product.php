@@ -36,6 +36,9 @@ class Product extends ProductCore
     /** @var string Short description */
     public $description_short;
 
+    /** @var string Short description */
+    public $short_desc;
+
     /** @var int Quantity available */
     public $quantity = 0;
 
