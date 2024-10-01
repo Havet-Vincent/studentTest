@@ -25,8 +25,8 @@ class StudentTest extends Module
     {
         return
             parent::install() && $this->registerHook('displayHeader')
-            && $this->registerhook('displayAdminProductsExtra')
-            && $this->registerhook('displayProductTab');
+            && $this->registerHook('displayAdminProductsExtra')
+            && $this->registerHook('displayProductTab');
     }
 
     public function hookDisplayAdminProductsExtra($params)
@@ -50,18 +50,17 @@ class StudentTest extends Module
 
     public function hookDisplayProductTab($params)
     {
+        $product = new Product($params['product']->id);
 
-        // Here you have to return the value of short_desc with some html integration
-        // instanciate the product class with the parameter get id_product
-        // Get the product category default
-        // instanciate the class Category with the field id_category_default from product class
-        // use method getProducts from category class to get all the product from the category
+        $shortDesc = $product->short_desc;
 
-        // return a html with the value with the 2 products you get
+        Tools::displayError('Valeur de $short_desc: ', $shortDesc);
 
-        return $output = '';
-
-
+        $html = '<div class="short_desc">
+                <h3>Description courte</h3>'
+                . $shortDesc . 
+                '</div>';
+        return $html;
     }
 
 }
