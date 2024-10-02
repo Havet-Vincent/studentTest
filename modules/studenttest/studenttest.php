@@ -25,43 +25,51 @@ class StudentTest extends Module
     {
         return
             parent::install() && $this->registerHook('displayHeader')
-            && $this->registerhook('displayAdminProductsExtra')
-            && $this->registerhook('displayProductTab');
+            && $this->registerHook('displayAdminProductsExtra')
+            && $this->registerHook('displayProductTab');
     }
 
     public function hookDisplayAdminProductsExtra($params)
     {
+        $idProduct = Tools::getValue('id_product');
+        $token = Tools::getValue('token');
 
+        $shortDesc = $this->getValueOfShortDesc($idProduct);
 
+        $link = Context::getContext()->link;
+        $actionLink = $link->getAdminLink('AdminProducts', false, ['action' => 'postProcess']);
 
-        // return the html form
-        // the submit button must have submitAddCustomField as name to work
-        // the input text must have short_desc as name
-
-        // instanciate the product class with the parameter get id_product
-        // save the value of the form short_desc on product class
-        // use the method save on product class to persist date in database
-
-
-
-        $output = '';
-        return $output;
+        $html = '    
+            <form action="' . $actionLink . '" method="post">
+                <input type="hidden" name="id_product" value="' . $idProduct . '" />
+                <input type="hidden" name="token" value="' . $token . '" />
+                <input type="hidden" name="submitAddCustomField" value="1" />
+                <label for="short_desc">Short description</label>
+                <textarea name="short_desc" id="short_desc">' . htmlspecialchars($shortDesc) . '</textarea>
+                <button type="submit" name="submitAddCustomField">' . 'Envoyer' . '</button>
+            </form>';
+        return $html;
     }
 
     public function hookDisplayProductTab($params)
     {
+        $product = new Product($params['product']->id);
 
-        // Here you have to return the value of short_desc with some html integration
-        // instanciate the product class with the parameter get id_product
-        // Get the product category default
-        // instanciate the class Category with the field id_category_default from product class
-        // use method getProducts from category class to get all the product from the category
+        $shortDesc = $product->short_desc;
 
-        // return a html with the value with the 2 products you get
+        Tools::displayError('Valeur de $short_desc: ', $shortDesc);
 
-        return $output = '';
+        $html = '<div class="short_desc">
+                <h3>Description courte</h3>'
+                . $shortDesc . 
+                '</div>';
+        return $html;
+    }
 
-
+    private function getValueOfShortDesc($idProduct)
+    {
+        return Db::getInstance()->getValue('SELECT short_desc FROM ' 
+                . _DB_PREFIX_ . 'product WHERE id_product = ' . (int)$idProduct);
     }
 
 }
